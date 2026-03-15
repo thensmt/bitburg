@@ -1,0 +1,223 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ─── Enums ───────────────────────────────────────────────────────────────────
+
+enum Role {
+  CLIENT
+  PRO
+  ADMIN
+}
+
+enum Tier {
+  D
+  C
+  B
+  A
+  S
+}
+
+enum ApplicationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum Category {
+  PHOTOGRAPHY
+  VIDEOGRAPHY
+  VIDEO_EDITING
+  PHOTO_EDITING
+  GRAPHIC_DESIGN
+  LIVE_STREAMING
+}
+
+enum JobType {
+  ON_SITE
+  REMOTE
+}
+
+enum JobStatus {
+  OPEN
+  IN_REVIEW
+  AWARDED
+  COMPLETED
+  CANCELLED
+}
+
+enum ApplicationResponseStatus {
+  PENDING
+  SELECTED
+  REJECTED
+  WITHDRAWN
+}
+
+enum RateResponse {
+  ACCEPTED
+  COUNTERED
+}
+
+enum BookingStatus {
+  CONFIRMED
+  COMPLETED
+  DISPUTED
+  CANCELLED
+}
+
+enum HandoffMethod {
+  PLATFORM_UPLOAD
+  EXTERNAL_LINK
+}
+
+// ─── Models ──────────────────────────────────────────────────────────────────
+
+model User {
+  id        String   @id @default(cuid())
+  clerkId   String   @unique
+  email     String   @unique
+  name      String
+  avatar    String?
+  role      Role     @default(CLIENT)
+  location  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  proProfile       ProProfile?
+  jobPostings      Job[]       @relation("ClientJobs")
+  bookingsAsClient Booking[]   @relation("ClientBookings")
+  reviewsGiven     Review[]    @relation("ReviewsGiven")
+  reviewsReceived  Review[]    @relation("ReviewsReceived")
+}
+
+model ProProfile {
+  id                 String            @id @default(cuid())
+  userId             String            @unique
+  user               User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bio                String?
+  specialties        Category[]
+  equipment          String[]
+  portfolioUrls      String[]
+  socialLinks        Json?
+  tier               Tier              @default(D)
+  applicationStatus  ApplicationStatus @default(PENDING)
+  instantHireEnabled Boolean           @default(false)
+  serviceArea        String?
+  willingToTravel    Boolean           @default(false)
+  avgRating          Float             @default(0)
+  totalJobsCompleted Int               @default(0)
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  rates        ProRate[]
+  applications Application[]
+  bookings     Booking[]     @relation("ProBookings")
+}
+
+model ProRate {
+  id           String     @id @default(cuid())
+  proProfileId String
+  proProfile   ProProfile @relation(fields: [proProfileId], references: [id], onDelete: Cascade)
+  category     Category
+  hourlyRate   Float?
+  flatRate     Float?
+  notes        String?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+model Job {
+  id                  String         @id @default(cuid())
+  clientId            String
+  client              User           @relation("ClientJobs", fields: [clientId], references: [id])
+  title               String
+  description         String
+  category            Category
+  jobType             JobType        @default(ON_SITE)
+  eventDate           DateTime?
+  durationHours       Float?
+  location            String?
+  deliveryDeadline    DateTime?
+  assetHandoffMethod  HandoffMethod?
+  assetHandoffUrl     String?
+  budget              Float
+  applicationDeadline DateTime
+  minTierRequired     Tier           @default(D)
+  status              JobStatus      @default(OPEN)
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+
+  applications Application[]
+  booking      Booking?
+}
+
+model Application {
+  id                   String                    @id @default(cuid())
+  jobId                String
+  job                  Job                       @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  proProfileId         String
+  proProfile           ProProfile                @relation(fields: [proProfileId], references: [id], onDelete: Cascade)
+  pitchMessage         String
+  rateResponse         RateResponse              @default(ACCEPTED)
+  counterRate          Float?
+  counterJustification String?
+  portfolioSamples     String[]
+  status               ApplicationResponseStatus @default(PENDING)
+  submittedAt          DateTime                  @default(now())
+  updatedAt            DateTime                  @updatedAt
+
+  @@unique([jobId, proProfileId])
+}
+
+model Booking {
+  id             String        @id @default(cuid())
+  jobId          String?       @unique
+  job            Job?          @relation(fields: [jobId], references: [id])
+  clientId       String
+  client         User          @relation("ClientBookings", fields: [clientId], references: [id])
+  proProfileId   String
+  pro            ProProfile    @relation("ProBookings", fields: [proProfileId], references: [id])
+  confirmedDate  DateTime?
+  confirmedRate  Float
+  depositPaid    Boolean       @default(false)
+  depositAmount  Float
+  balancePaid    Boolean       @default(false)
+  status         BookingStatus @default(CONFIRMED)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  review  Review?
+  dispute Dispute?
+}
+
+model Review {
+  id         String   @id @default(cuid())
+  bookingId  String   @unique
+  booking    Booking  @relation(fields: [bookingId], references: [id])
+  reviewerId String
+  reviewer   User     @relation("ReviewsGiven", fields: [reviewerId], references: [id])
+  revieweeId String
+  reviewee   User     @relation("ReviewsReceived", fields: [revieweeId], references: [id])
+  rating     Int
+  body       String?
+  createdAt  DateTime @default(now())
+}
+
+model Dispute {
+  id         String    @id @default(cuid())
+  bookingId  String    @unique
+  booking    Booking   @relation(fields: [bookingId], references: [id])
+  openedById String
+  reason     String
+  evidence   String?
+  resolution String?
+  resolvedAt DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
