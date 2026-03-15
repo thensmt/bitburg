@@ -171,21 +171,21 @@ export default function ApplyPage() {
             </label>
             <div className="space-y-3">
               <input
-                type="url"
+                type="text"
                 placeholder="Instagram URL"
                 value={form.instagram}
                 onChange={(e) => setForm({ ...form, instagram: e.target.value })}
                 className="w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm text-zinc-900 placeholder-zinc-400 focus:border-blue-500 focus:outline-none"
               />
               <input
-                type="url"
+                type="text"
                 placeholder="Website URL"
                 value={form.website}
                 onChange={(e) => setForm({ ...form, website: e.target.value })}
                 className="w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm text-zinc-900 placeholder-zinc-400 focus:border-blue-500 focus:outline-none"
               />
               <input
-                type="url"
+                type="text"
                 placeholder="YouTube URL"
                 value={form.youtube}
                 onChange={(e) => setForm({ ...form, youtube: e.target.value })}
