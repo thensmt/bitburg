@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { AdSlot } from "@/components/AdSlot";
+import Link from "next/link";
 
 export default async function DashboardPage() {
   const { userId } = await auth();
@@ -17,7 +18,8 @@ export default async function DashboardPage() {
   // Pros who haven't applied yet go to the application form
   if (user.role === "PRO" && !user.proProfile) redirect("/apply");
 
-  const proStatus = user.proProfile?.applicationStatus ?? null;
+  const isAdmin = user.role === "ADMIN";
+  const proStatus = !isAdmin ? (user.proProfile?.applicationStatus ?? null) : null;
 
   return (
     <div className="min-h-screen bg-zinc-50">
@@ -27,6 +29,17 @@ export default async function DashboardPage() {
           Welcome back, {user.name}
         </h1>
         <p className="mt-1 text-zinc-500 capitalize">Role: {user.role.toLowerCase()}</p>
+
+        {isAdmin && (
+          <div className="mt-6 flex gap-3">
+            <Link
+              href="/admin"
+              className="rounded-xl bg-zinc-900 px-5 py-3 text-sm font-semibold text-white hover:bg-zinc-700"
+            >
+              Admin Panel →
+            </Link>
+          </div>
+        )}
 
         {proStatus === "PENDING" && (
           <div className="mt-6 rounded-xl border border-yellow-200 bg-yellow-50 px-5 py-4">
