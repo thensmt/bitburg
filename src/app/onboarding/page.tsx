@@ -16,7 +16,7 @@ export default function OnboardingPage() {
     });
 
     if (res.ok) {
-      router.push("/dashboard");
+      router.push(role === "PRO" ? "/apply" : "/dashboard");
     } else {
       setLoading(false);
     }
