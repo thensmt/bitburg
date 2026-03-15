@@ -49,13 +49,17 @@ export default async function ApplicationDetailPage({
         {/* Specialties */}
         <section className="rounded-xl border border-zinc-800 bg-zinc-900 p-5">
           <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-zinc-500">Specialties</h2>
-          <div className="flex flex-wrap gap-2">
-            {profile.specialties.map((s) => (
-              <span key={s} className="rounded-full bg-blue-500/20 px-3 py-1 text-xs font-medium text-blue-300">
-                {s.replace(/_/g, " ")}
-              </span>
-            ))}
-          </div>
+          {profile.specialties.length > 0 ? (
+            <div className="flex flex-wrap gap-2">
+              {profile.specialties.map((s) => (
+                <span key={s} className="rounded-full bg-blue-500/20 px-3 py-1 text-xs font-medium text-blue-300">
+                  {s.replace(/_/g, " ")}
+                </span>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-zinc-600 italic">None provided</p>
+          )}
         </section>
 
         {/* Bio */}
