@@ -13,7 +13,7 @@ export async function POST(req: Request) {
 
   const user = await db.user.update({
     where: { clerkId: userId },
-    data: { role },
+    data: { role, onboardingComplete: true },
   });
 
   // If pro, create an empty ProProfile so they can fill it in

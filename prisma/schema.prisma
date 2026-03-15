@@ -83,9 +83,10 @@ model User {
   email     String   @unique
   name      String
   avatar    String?
-  role      Role     @default(CLIENT)
-  location  String?
-  createdAt DateTime @default(now())
+  role               Role     @default(CLIENT)
+  onboardingComplete Boolean  @default(false)
+  location           String?
+  createdAt          DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   proProfile       ProProfile?
