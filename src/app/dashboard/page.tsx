@@ -30,16 +30,30 @@ export default async function DashboardPage() {
         </h1>
         <p className="mt-1 text-zinc-500 capitalize">Role: {user.role.toLowerCase()}</p>
 
-        {isAdmin && (
-          <div className="mt-6 flex gap-3">
+        <div className="mt-6 flex flex-wrap gap-3">
+          <Link
+            href="/jobs"
+            className="rounded-xl bg-blue-500 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-600"
+          >
+            {user.role === "CLIENT" ? "My Jobs →" : "Job Board →"}
+          </Link>
+          {user.role === "CLIENT" && (
+            <Link
+              href="/jobs/new"
+              className="rounded-xl border border-zinc-300 bg-white px-5 py-3 text-sm font-semibold text-zinc-700 hover:border-blue-400"
+            >
+              + Post a Job
+            </Link>
+          )}
+          {isAdmin && (
             <Link
               href="/admin"
               className="rounded-xl bg-zinc-900 px-5 py-3 text-sm font-semibold text-white hover:bg-zinc-700"
             >
               Admin Panel →
             </Link>
-          </div>
-        )}
+          )}
+        </div>
 
         {proStatus === "PENDING" && (
           <div className="mt-6 rounded-xl border border-yellow-200 bg-yellow-50 px-5 py-4">
