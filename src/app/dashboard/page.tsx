@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { AdSlot } from "@/components/AdSlot";
 import Link from "next/link";
+import ProDashboard from "./ProDashboard";
 
 export default async function DashboardPage() {
   const { userId } = await auth();
@@ -18,6 +19,29 @@ export default async function DashboardPage() {
   // Pros who haven't applied yet go to the application form
   if (user.role === "PRO" && !user.proProfile) redirect("/apply");
 
+  // Role-based routing
+  if (user.role === "ADMIN") redirect("/admin");
+
+  if (user.role === "PRO") {
+    return (
+      <div className="min-h-screen bg-zinc-50">
+        <AdSlot zone="dashboard-top" />
+        <main className="mx-auto max-w-5xl px-6 py-12">
+          <h1 className="text-2xl font-bold text-zinc-900">
+            Welcome back, {user.name}
+          </h1>
+          <p className="mt-1 text-zinc-500 capitalize">
+            Role: {user.role.toLowerCase()}
+          </p>
+          <div className="mt-8">
+            <ProDashboard clerkId={userId} />
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  // CLIENT dashboard (all existing logic preserved exactly)
   const isAdmin = user.role === "ADMIN";
   const proStatus = !isAdmin ? (user.proProfile?.applicationStatus ?? null) : null;
 
