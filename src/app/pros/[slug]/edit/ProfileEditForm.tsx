@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import type { Category } from "@/generated/prisma";
+import type { Category } from "@prisma/client";
 
 const ALL_CATEGORIES: Category[] = [
   "PHOTOGRAPHY",

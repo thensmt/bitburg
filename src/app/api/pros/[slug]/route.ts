@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import type { Category } from "@/generated/prisma";
+import type { Category } from "@prisma/client";
 
 interface RateInput {
   category: Category;

@@ -1,7 +1,7 @@
 import { db } from "@/lib/db";
 import { AdSlot } from "@/components/AdSlot";
 import Link from "next/link";
-import type { Category, Tier } from "@/generated/prisma";
+import type { Category, Tier } from "@prisma/client";
 
 const CATEGORY_LABELS: Record<Category, string> = {
   PHOTOGRAPHY: "Photography",

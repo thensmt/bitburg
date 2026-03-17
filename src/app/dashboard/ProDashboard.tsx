@@ -16,7 +16,7 @@ export default async function ProDashboard({ clerkId }: Props) {
             orderBy: { submittedAt: "desc" },
           },
           bookings: {
-            include: { job: true, client: true },
+            include: { job: true, client: true, review: true },
             orderBy: { createdAt: "desc" },
           },
         },

@@ -42,8 +42,7 @@ export default async function DashboardPage() {
   }
 
   // CLIENT dashboard (all existing logic preserved exactly)
-  const isAdmin = user.role === "ADMIN";
-  const proStatus = !isAdmin ? (user.proProfile?.applicationStatus ?? null) : null;
+  const proStatus = user.proProfile?.applicationStatus ?? null;
 
   return (
     <div className="min-h-screen bg-zinc-50">
@@ -67,14 +66,6 @@ export default async function DashboardPage() {
               className="rounded-xl border border-zinc-300 bg-white px-5 py-3 text-sm font-semibold text-zinc-700 hover:border-blue-400"
             >
               + Post a Job
-            </Link>
-          )}
-          {isAdmin && (
-            <Link
-              href="/admin"
-              className="rounded-xl bg-zinc-900 px-5 py-3 text-sm font-semibold text-white hover:bg-zinc-700"
-            >
-              Admin Panel →
             </Link>
           )}
         </div>

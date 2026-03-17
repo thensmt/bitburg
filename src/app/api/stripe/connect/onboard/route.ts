@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { stripe } from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 
 export async function POST() {
   const { userId: clerkId } = await auth();
@@ -18,7 +18,7 @@ export async function POST() {
   let stripeAccountId = user.proProfile.stripeAccountId;
 
   if (!stripeAccountId) {
-    const account = await stripe.accounts.create({ type: "express" });
+    const account = await getStripe().accounts.create({ type: "express" });
     stripeAccountId = account.id;
     await db.proProfile.update({
       where: { id: user.proProfile.id },
@@ -26,7 +26,7 @@ export async function POST() {
     });
   }
 
-  const accountLink = await stripe.accountLinks.create({
+  const accountLink = await getStripe().accountLinks.create({
     account: stripeAccountId,
     refresh_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?stripe=refresh`,
     return_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?stripe=success`,

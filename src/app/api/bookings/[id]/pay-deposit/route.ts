@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { stripe } from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 
 export async function POST(
   _req: Request,
@@ -28,7 +28,7 @@ export async function POST(
     return NextResponse.json({ error: "Pro has not connected a payment account" }, { status: 400 });
   }
 
-  const intent = await stripe.paymentIntents.create({
+  const intent = await getStripe().paymentIntents.create({
     amount: Math.round(booking.depositAmount * 100),
     currency: "usd",
     transfer_data: { destination: booking.pro.stripeAccountId },

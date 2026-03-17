@@ -1,5 +1,13 @@
 // Run: npm install stripe @stripe/stripe-js @stripe/react-stripe-js
 import Stripe from 'stripe';
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-04-10',
-});
+
+let _stripe: Stripe | null = null;
+
+export function getStripe(): Stripe {
+  if (!_stripe) {
+    _stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+      apiVersion: '2026-02-25.clover',
+    });
+  }
+  return _stripe;
+}
