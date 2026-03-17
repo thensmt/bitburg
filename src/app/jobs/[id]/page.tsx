@@ -166,8 +166,14 @@ export default async function JobDetailPage({
           )}
 
           {isOwner && (
-            <div className="mt-6 rounded-2xl border border-zinc-200 bg-white px-6 py-4">
+            <div className="mt-6 rounded-2xl border border-zinc-200 bg-white px-6 py-4 flex items-center justify-between">
               <p className="text-sm text-zinc-500">You posted this job.</p>
+              <Link
+                href={`/jobs/${job.id}/applicants`}
+                className="rounded-xl bg-zinc-900 px-4 py-2 text-sm font-semibold text-white hover:bg-zinc-700"
+              >
+                View Applicants →
+              </Link>
             </div>
           )}
         </div>

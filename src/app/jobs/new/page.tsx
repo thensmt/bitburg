@@ -34,6 +34,10 @@ export default function NewJobPage() {
     eventDate: "",
     durationHours: "",
     location: "",
+    city: "",
+    state: "",
+    market: "DMV",
+    eventType: "",
     deliveryDeadline: "",
     budget: "",
     applicationDeadline: "",
@@ -63,6 +67,9 @@ export default function NewJobPage() {
         eventDate: form.eventDate || null,
         deliveryDeadline: form.deliveryDeadline || null,
         location: form.location || null,
+        city: form.city || null,
+        state: form.state || null,
+        eventType: form.eventType || null,
       }),
     });
 
@@ -119,6 +126,19 @@ export default function NewJobPage() {
                 <option key={c.value} value={c.value}>{c.label}</option>
               ))}
             </select>
+          </div>
+
+          {/* Event Type */}
+          <div>
+            <label className={labelClass}>Event Type / Sport</label>
+            <input
+              type="text"
+              placeholder="e.g. Basketball, Football, Cheer, Wrestling, Corporate, Concert"
+              value={form.eventType}
+              onChange={(e) => set("eventType", e.target.value)}
+              className={inputClass}
+            />
+            <p className="mt-1 text-xs text-zinc-400">Helps pros find the right jobs and improves ad targeting.</p>
           </div>
 
           {/* Description */}

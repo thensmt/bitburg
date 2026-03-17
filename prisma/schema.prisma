@@ -86,6 +86,7 @@ model User {
   role               Role     @default(CLIENT)
   onboardingComplete Boolean  @default(false)
   location           String?
+  stripeCustomerId   String?
   createdAt          DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -100,6 +101,7 @@ model ProProfile {
   id                 String            @id @default(cuid())
   userId             String            @unique
   user               User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  slug               String?           @unique
   bio                String?
   specialties        Category[]
   equipment          String[]
@@ -109,9 +111,13 @@ model ProProfile {
   applicationStatus  ApplicationStatus @default(PENDING)
   instantHireEnabled Boolean           @default(false)
   serviceArea        String?
+  market             String?
+  state              String?
   willingToTravel    Boolean           @default(false)
   avgRating          Float             @default(0)
   totalJobsCompleted Int               @default(0)
+  profileViews       Int               @default(0)
+  stripeAccountId    String?
   createdAt          DateTime          @default(now())
   updatedAt          DateTime          @updatedAt
 
@@ -143,12 +149,20 @@ model Job {
   eventDate           DateTime?
   durationHours       Float?
   location            String?
+  city                String?
+  state               String?
+  market              String         @default("DMV")
+  latitude            Float?
+  longitude           Float?
+  eventType           String?
   deliveryDeadline    DateTime?
   assetHandoffMethod  HandoffMethod?
   assetHandoffUrl     String?
   budget              Float
   applicationDeadline DateTime
   minTierRequired     Tier           @default(D)
+  featured            Boolean        @default(false)
+  viewCount           Int            @default(0)
   status              JobStatus      @default(OPEN)
   createdAt           DateTime       @default(now())
   updatedAt           DateTime       @updatedAt
