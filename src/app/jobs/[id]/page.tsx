@@ -134,16 +134,21 @@ export default async function JobDetailPage({
           {/* Apply Panel — only for approved pros who meet tier req */}
           {isPro && proApproved && tierOk && job.status === "OPEN" && !deadlinePassed && (
             <div className="mt-6">
-              {existingApplication ? (
+              {existingApplication?.status === "PENDING" && (
                 <div className="rounded-2xl border border-green-200 bg-green-50 px-6 py-4">
                   <p className="text-sm font-medium text-green-800">
-                    You&apos;ve already applied to this job.{" "}
-                    <span className="text-green-600 capitalize">
-                      Status: {existingApplication.status.toLowerCase()}
-                    </span>
+                    Application submitted — under review by the client.
                   </p>
                 </div>
-              ) : (
+              )}
+              {existingApplication?.status === "SELECTED" && (
+                <div className="rounded-2xl border border-green-200 bg-green-50 px-6 py-4">
+                  <p className="text-sm font-medium text-green-800">
+                    You were selected for this job. 🎉
+                  </p>
+                </div>
+              )}
+              {(!existingApplication || existingApplication.status === "REJECTED") && (
                 <ApplyPanel jobId={job.id} budget={job.budget} />
               )}
             </div>
