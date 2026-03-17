@@ -3,8 +3,9 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { AdSlot } from "@/components/AdSlot";
 import Link from "next/link";
+import type { Tier } from "@prisma/client";
 
-const TIER_ORDER = ["D", "C", "B", "A", "S"];
+const TIER_ORDER: Tier[] = ["D", "C", "B", "A", "S"];
 
 const CATEGORY_LABELS: Record<string, string> = {
   PHOTOGRAPHY: "Photography",
