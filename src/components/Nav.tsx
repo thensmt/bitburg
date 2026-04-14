@@ -26,10 +26,12 @@ export function Nav() {
   const pathname = usePathname();
   const { user, isLoaded } = useUser();
 
-  // Don't show nav on auth pages
+  // Don't show nav on auth or marketing pages
   if (
     pathname.startsWith("/sign-in") ||
     pathname.startsWith("/sign-up") ||
+    pathname.startsWith("/waitlist") ||
+    pathname.startsWith("/onboarding") ||
     pathname === "/"
   ) {
     return null;
