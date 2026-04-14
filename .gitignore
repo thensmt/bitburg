@@ -52,3 +52,6 @@ next-env.d.ts
 
 # Playwright auth state (contains session cookies)
 .auth/
+
+# clerk configuration (can include secrets)
+/.clerk/
