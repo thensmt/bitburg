@@ -1,16 +1,38 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Footer } from "@/components/marketing/Footer";
 
-// Visual mockup only. The existing backend at POST /api/onboarding will be
-// wired in after design approval — see CLAUDE.md role model.
-
-type Role = "CLIENT" | "PRO" | null;
+type Role = "CLIENT" | "PRO";
 
 export default function OnboardingPage() {
-  const [selected, setSelected] = useState<Role>(null);
+  const router = useRouter();
+  const [submitting, setSubmitting] = useState<Role | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  async function selectRole(role: Role) {
+    if (submitting) return;
+    setSubmitting(role);
+    setError(null);
+    try {
+      const res = await fetch("/api/onboarding", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ role }),
+      });
+      if (!res.ok) {
+        setSubmitting(null);
+        setError("Something went wrong. Try again or contact support.");
+        return;
+      }
+      router.push(role === "PRO" ? "/apply" : "/dashboard");
+    } catch {
+      setSubmitting(null);
+      setError("Network error. Check your connection and try again.");
+    }
+  }
 
   return (
     <div className="flex min-h-screen flex-col bg-[#F8F7F3] text-[#3D3C37] font-sans antialiased">
@@ -41,18 +63,26 @@ export default function OnboardingPage() {
             title="I need media coverage"
             description="Post jobs, review vetted applicants, and book photographers, videographers, and editors for your events."
             cta="Continue as a client"
-            selected={selected === "CLIENT"}
-            onSelect={() => setSelected("CLIENT")}
+            busy={submitting === "CLIENT"}
+            disabled={submitting !== null && submitting !== "CLIENT"}
+            onSelect={() => selectRole("CLIENT")}
           />
           <RoleCard
             role="PRO"
             title="I'm a media professional"
             description="Apply for access, get tiered on your portfolio, and win jobs from clients across the DMV."
             cta="Continue as a pro"
-            selected={selected === "PRO"}
-            onSelect={() => setSelected("PRO")}
+            busy={submitting === "PRO"}
+            disabled={submitting !== null && submitting !== "PRO"}
+            onSelect={() => selectRole("PRO")}
           />
         </div>
+
+        {error && (
+          <p role="alert" className="mt-6 text-sm text-[#C41E3A]">
+            {error}
+          </p>
+        )}
 
         <p className="mt-10 text-sm text-[#6B6559]">
           You can't change this later without contacting support. Pick the one
@@ -70,25 +100,28 @@ function RoleCard({
   title,
   description,
   cta,
-  selected,
+  busy,
+  disabled,
   onSelect,
 }: {
   role: "CLIENT" | "PRO";
   title: string;
   description: string;
   cta: string;
-  selected: boolean;
+  busy: boolean;
+  disabled: boolean;
   onSelect: () => void;
 }) {
-  const wrapperClass = selected
+  const wrapperClass = busy
     ? "w-full rounded-lg border border-[#1B4332] bg-white p-8 text-left ring-2 ring-[#C9A961] ring-offset-4 ring-offset-[#F8F7F3] transition-all"
-    : "w-full rounded-lg border border-[#D4CEBC] bg-white p-8 text-left transition-all hover:border-[#1B4332]";
+    : "w-full rounded-lg border border-[#D4CEBC] bg-white p-8 text-left transition-all hover:border-[#1B4332] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-[#D4CEBC]";
 
   return (
     <button
       type="button"
       onClick={onSelect}
-      aria-pressed={selected}
+      disabled={disabled || busy}
+      aria-busy={busy}
       data-role={role}
       className={wrapperClass}
     >
@@ -103,15 +136,17 @@ function RoleCard({
       <div className="mt-6 flex items-center justify-end">
         <span
           className={
-            selected
+            busy
               ? "inline-flex items-center rounded-md bg-[#1B4332] px-5 py-2.5 text-sm font-medium text-[#F8F7F3]"
               : "inline-flex items-center text-sm font-medium text-[#1B4332]"
           }
         >
-          {cta}
-          <span className="ml-2" aria-hidden>
-            →
-          </span>
+          {busy ? "Setting up…" : cta}
+          {!busy && (
+            <span className="ml-2" aria-hidden>
+              →
+            </span>
+          )}
         </span>
       </div>
     </button>
