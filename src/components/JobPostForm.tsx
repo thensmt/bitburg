@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -88,7 +88,9 @@ function JobForm({ palette, onSuccess }: PaletteVariantProps) {
     formState: { errors, isValid },
     reset,
   } = useForm<JobPostFormData>({
-    resolver: zodResolver(jobPostSchema),
+    // Cast because zod v4's coerce creates input/output type divergence
+    // that @hookform/resolvers@5 types don't reconcile automatically.
+    resolver: zodResolver(jobPostSchema) as Resolver<JobPostFormData>,
     defaultValues: {
       minTierRequired: "D",
       jobType: "ON_SITE",
