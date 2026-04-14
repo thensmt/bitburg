@@ -10,6 +10,14 @@ export async function POST(req: Request) {
   if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
   if (user.role !== "PRO") return NextResponse.json({ error: "Only pros can apply" }, { status: 403 });
 
+  const existingProfile = await db.proProfile.findUnique({ where: { userId: user.id } });
+  if (existingProfile?.applicationStatus === "APPROVED") {
+    return NextResponse.json(
+      { error: "Your profile is already approved. Use profile edit to update details." },
+      { status: 409 }
+    );
+  }
+
   const { bio, specialties, equipment, portfolioUrls, socialLinks, serviceArea, willingToTravel } =
     await req.json();
 

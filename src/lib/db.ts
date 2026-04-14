@@ -8,7 +8,9 @@ const globalForPrisma = globalThis as unknown as {
 function createPrismaClient() {
   const adapter = new PrismaPg({
     connectionString: process.env.DATABASE_URL!,
-    max: 1, // limit connections per serverless function instance
+    // Serverless (Vercel) gets one connection per function instance.
+    // Local dev gets a small pool so concurrent requests don't stall each other.
+    max: process.env.NODE_ENV === "production" ? 1 : 5,
   });
   return new PrismaClient({ adapter });
 }

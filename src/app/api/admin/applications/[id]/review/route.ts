@@ -26,6 +26,15 @@ export async function POST(
     return NextResponse.json({ error: "Invalid tier" }, { status: 400 });
   }
 
+  const profile = await db.proProfile.findUnique({ where: { id } });
+  if (!profile) return NextResponse.json({ error: "Application not found" }, { status: 404 });
+  if (profile.applicationStatus !== "PENDING") {
+    return NextResponse.json(
+      { error: `Application is already ${profile.applicationStatus.toLowerCase()}.` },
+      { status: 409 }
+    );
+  }
+
   await db.proProfile.update({
     where: { id },
     data: {
