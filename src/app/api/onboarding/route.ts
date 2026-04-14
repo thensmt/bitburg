@@ -20,20 +20,21 @@ export async function POST(req: Request) {
   }
 
   // If the Clerk user.created webhook hasn't landed yet (common in local dev),
-  // lazily create the User row from Clerk's identity so onboarding can proceed.
+  // lazily create the User row from Clerk's identity. Upsert — not create —
+  // so a concurrent webhook firing between the findUnique above and this
+  // write doesn't trip a unique-constraint error.
   if (!existing) {
     const clerkUser = await currentUser();
     if (!clerkUser) {
       return NextResponse.json({ error: "Clerk user not found" }, { status: 404 });
     }
-    await db.user.create({
-      data: {
-        clerkId: userId,
-        email: clerkUser.emailAddresses[0]?.emailAddress ?? `${userId}@placeholder.local`,
-        name: `${clerkUser.firstName ?? ""} ${clerkUser.lastName ?? ""}`.trim() || "New User",
-        avatar: clerkUser.imageUrl ?? null,
-        role: "CLIENT",
-      },
+    const email = clerkUser.emailAddresses[0]?.emailAddress ?? `${userId}@placeholder.local`;
+    const name = `${clerkUser.firstName ?? ""} ${clerkUser.lastName ?? ""}`.trim() || "New User";
+    const avatar = clerkUser.imageUrl ?? null;
+    await db.user.upsert({
+      where: { clerkId: userId },
+      create: { clerkId: userId, email, name, avatar, role: "CLIENT" },
+      update: {},
     });
   }
 
