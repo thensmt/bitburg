@@ -16,7 +16,7 @@ Every item below is a locked decision. Check it off when implemented and verifie
 - [ ] Database is the single source of truth for user roles
 - [ ] Every role change in DB triggers a dual-write to Clerk `publicMetadata.role`
 - [x] Clerk webhook (`/api/webhooks/clerk`) sets default role to CLIENT on `user.created`
-- [ ] Nav component reads role from DB (via `/api/me/role`), not Clerk metadata
+- [x] Nav component reads role from DB (via `/api/me/role`), not Clerk metadata
 - [x] `src/proxy.ts` exists with centralized role matrix (Next.js 16 convention — `middleware.ts` is deprecated, `proxy.ts` is the new name and runs on Node.js by default)
 - [x] Middleware role resolution is DB-authoritative (resolves role via `getSessionUserByClerkId` in `src/lib/auth.ts`)
 - [x] Onboarding route blocks re-onboarding for users who already have a role

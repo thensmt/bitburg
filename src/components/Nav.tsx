@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { UserButton, useUser } from "@clerk/nextjs";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
 const CLIENT_LINKS = [
@@ -24,7 +25,28 @@ const ADMIN_LINKS = [
 
 export function Nav() {
   const pathname = usePathname();
-  const { user, isLoaded } = useUser();
+  const { isLoaded, isSignedIn } = useUser();
+  const [role, setRole] = useState<string | null>(null);
+
+  // Re-fetch whenever auth state changes — otherwise a user who lands on
+  // /sign-in first (role fetch 401s → role=null) keeps seeing the CLIENT
+  // default forever after signing in. Same goes for sign-out / account switch.
+  useEffect(() => {
+    if (!isSignedIn) {
+      setRole(null);
+      return;
+    }
+    let cancelled = false;
+    fetch("/api/me/role")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (!cancelled) setRole(data?.role ?? null);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [isSignedIn]);
 
   // Don't show nav on auth or marketing pages
   if (
@@ -37,7 +59,6 @@ export function Nav() {
     return null;
   }
 
-  const role = (user?.publicMetadata?.role as string) ?? "CLIENT";
   const links =
     role === "ADMIN" ? ADMIN_LINKS : role === "PRO" ? PRO_LINKS : CLIENT_LINKS;
 
