@@ -85,6 +85,7 @@ function JobForm({ palette, onSuccess }: PaletteVariantProps) {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors, isValid },
     reset,
   } = useForm<JobPostFormData>({
@@ -336,14 +337,21 @@ function JobForm({ palette, onSuccess }: PaletteVariantProps) {
               <span style={{ color: palette.error }}>*</span>
             </label>
             <div className="flex gap-4">
-              {[
-                { value: "ON_SITE", label: "On-Site" },
-                { value: "REMOTE", label: "Remote" },
-              ].map((option) => (
+              {(
+                [
+                  { value: "ON_SITE", label: "On-Site" },
+                  { value: "REMOTE", label: "Remote" },
+                ] as const
+              ).map((option) => (
                 <button
                   key={option.value}
                   type="button"
-                  onClick={() => {}}
+                  onClick={() =>
+                    setValue("jobType", option.value, {
+                      shouldValidate: true,
+                      shouldDirty: true,
+                    })
+                  }
                   className="flex-1 rounded-lg border-2 px-4 py-4 font-semibold transition-all text-center"
                   style={{
                     borderColor:
@@ -358,8 +366,6 @@ function JobForm({ palette, onSuccess }: PaletteVariantProps) {
                         : palette.text,
                   }}
                   aria-pressed={jobType === option.value}
-                  {...register("jobType")}
-                  value={option.value}
                 >
                   {option.label}
                 </button>
@@ -540,20 +546,27 @@ function JobForm({ palette, onSuccess }: PaletteVariantProps) {
                   <span style={{ color: palette.error }}>*</span>
                 </label>
                 <div className="flex gap-4">
-                  {[
-                    {
-                      value: "PLATFORM_UPLOAD",
-                      label: "Upload to Bitburg",
-                    },
-                    {
-                      value: "EXTERNAL_LINK",
-                      label: "External link",
-                    },
-                  ].map((option) => (
+                  {(
+                    [
+                      {
+                        value: "PLATFORM_UPLOAD",
+                        label: "Upload to Bitburg",
+                      },
+                      {
+                        value: "EXTERNAL_LINK",
+                        label: "External link",
+                      },
+                    ] as const
+                  ).map((option) => (
                     <button
                       key={option.value}
                       type="button"
-                      onClick={() => {}}
+                      onClick={() =>
+                        setValue("assetHandoffMethod", option.value, {
+                          shouldValidate: true,
+                          shouldDirty: true,
+                        })
+                      }
                       className="flex-1 rounded-lg border-2 px-3 py-3 text-sm font-medium transition-all text-center"
                       style={{
                         borderColor:
@@ -570,8 +583,6 @@ function JobForm({ palette, onSuccess }: PaletteVariantProps) {
                             : palette.text,
                       }}
                       aria-pressed={assetHandoffMethod === option.value}
-                      {...register("assetHandoffMethod")}
-                      value={option.value}
                     >
                       {option.label}
                     </button>
