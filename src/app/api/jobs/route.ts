@@ -8,7 +8,7 @@ export async function POST(req: Request) {
 
   const user = await db.user.findUnique({ where: { clerkId: userId } });
   if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
-  if (user.role !== "CLIENT" && user.role !== "ADMIN") {
+  if (user.role !== "CLIENT") {
     return NextResponse.json({ error: "Only clients can post jobs" }, { status: 403 });
   }
 
