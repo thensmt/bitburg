@@ -25,21 +25,28 @@ const ADMIN_LINKS = [
 
 export function Nav() {
   const pathname = usePathname();
-  const { isLoaded } = useUser();
+  const { isLoaded, isSignedIn } = useUser();
   const [role, setRole] = useState<string | null>(null);
 
+  // Re-fetch whenever auth state changes — otherwise a user who lands on
+  // /sign-in first (role fetch 401s → role=null) keeps seeing the CLIENT
+  // default forever after signing in. Same goes for sign-out / account switch.
   useEffect(() => {
+    if (!isSignedIn) {
+      setRole(null);
+      return;
+    }
     let cancelled = false;
     fetch("/api/me/role")
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
-        if (!cancelled && data?.role) setRole(data.role);
+        if (!cancelled) setRole(data?.role ?? null);
       })
       .catch(() => {});
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [isSignedIn]);
 
   // Don't show nav on auth pages
   if (
