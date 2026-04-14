@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { UserButton, useUser } from "@clerk/nextjs";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
 const CLIENT_LINKS = [
@@ -24,7 +25,21 @@ const ADMIN_LINKS = [
 
 export function Nav() {
   const pathname = usePathname();
-  const { user, isLoaded } = useUser();
+  const { isLoaded } = useUser();
+  const [role, setRole] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/me/role")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (!cancelled && data?.role) setRole(data.role);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // Don't show nav on auth pages
   if (
@@ -35,7 +50,6 @@ export function Nav() {
     return null;
   }
 
-  const role = (user?.publicMetadata?.role as string) ?? "CLIENT";
   const links =
     role === "ADMIN" ? ADMIN_LINKS : role === "PRO" ? PRO_LINKS : CLIENT_LINKS;
 
