@@ -25,7 +25,7 @@ export async function POST(
   if (booking.status !== "CONFIRMED") {
     return NextResponse.json(
       { error: "Only confirmed bookings can be marked as completed." },
-      { status: 400 }
+      { status: 409 }
     );
   }
 

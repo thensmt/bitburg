@@ -28,7 +28,7 @@ export async function POST(
   if (booking.status !== "COMPLETED") {
     return NextResponse.json(
       { error: "Reviews can only be left on completed bookings." },
-      { status: 400 }
+      { status: 409 }
     );
   }
 

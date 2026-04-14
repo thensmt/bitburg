@@ -22,9 +22,9 @@ export async function POST(
   const { id: jobId } = await params;
   const job = await db.job.findUnique({ where: { id: jobId } });
   if (!job) return NextResponse.json({ error: "Job not found" }, { status: 404 });
-  if (job.status !== "OPEN") return NextResponse.json({ error: "Job is no longer open" }, { status: 400 });
+  if (job.status !== "OPEN") return NextResponse.json({ error: "Job is no longer open" }, { status: 409 });
   if (new Date(job.applicationDeadline) < new Date()) {
-    return NextResponse.json({ error: "Application deadline has passed" }, { status: 400 });
+    return NextResponse.json({ error: "Application deadline has passed" }, { status: 409 });
   }
 
   const TIER_ORDER = ["D", "C", "B", "A", "S"];

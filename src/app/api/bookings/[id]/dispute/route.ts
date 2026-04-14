@@ -41,7 +41,7 @@ export async function POST(
   if (booking.status !== "CONFIRMED" && booking.status !== "COMPLETED") {
     return NextResponse.json(
       { error: "Disputes can only be opened on confirmed or completed bookings." },
-      { status: 400 }
+      { status: 409 }
     );
   }
 

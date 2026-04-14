@@ -23,7 +23,7 @@ export async function POST(
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
   if (job.status !== "OPEN" && job.status !== "IN_REVIEW") {
-    return NextResponse.json({ error: "Job is no longer open" }, { status: 400 });
+    return NextResponse.json({ error: "Job is no longer open" }, { status: 409 });
   }
 
   const { applicationId } = await req.json();
