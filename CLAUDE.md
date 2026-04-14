@@ -22,15 +22,15 @@ npx prisma generate                    # regenerate Prisma client after schema c
 **Stack:** Next.js 16 (App Router) · TypeScript · Tailwind CSS v4 · Clerk (auth) · Prisma (ORM) · PostgreSQL via Supabase · Google Cloud Storage (media)
 
 **Auth — Clerk:**
-- Three roles: `CLIENT`, `PRO`, `ADMIN` — stored on the `User` model, synced from Clerk via webhook or metadata
-- Middleware at `src/middleware.ts` gates routes by role
+- Three roles: `CLIENT`, `PRO`, `ADMIN` — stored on the `User` model, synced from Clerk via webhook
+- Proxy at `src/proxy.ts` (Next.js 16 replaces `middleware.ts`) gates routes by role — DB-authoritative via `getSessionUserByClerkId` in `src/lib/auth.ts`
 - `clerkId` on `User` links Clerk identity to the DB record
 
 **Database — Prisma + Supabase:**
 - Schema at `prisma/schema.prisma` — single source of truth for all models
 - `.env` needs `DATABASE_URL` (pooled, for Prisma) and `DIRECT_URL` (direct connection, for migrations)
 - Use Supabase connection strings: `postgresql://postgres:[PASSWORD]@db.[REF].supabase.co:5432/postgres`
-- Generated client outputs to `src/generated/prisma`
+- Import Prisma types and client from `@prisma/client` (no custom generator `output` configured)
 
 **Key data relationships:**
 - `User` → `ProProfile` (1:1, only pros have this)
@@ -58,9 +58,8 @@ npx prisma generate                    # regenerate Prisma client after schema c
 - `src/app/` — App Router pages and layouts
 - `src/app/api/` — API route handlers
 - `src/components/` — shared React components
-- `src/lib/` — server utilities (db client, auth helpers, GCS client)
-- `src/generated/prisma` — auto-generated Prisma client (do not edit)
-- `prisma/schema.prisma` — DB schema
+- `src/lib/` — server utilities (db client, auth helpers, validators, external service clients)
+- `prisma/schema.prisma` — DB schema (Prisma client is generated into `node_modules/@prisma/client`)
 
 ## Environment Variables
 

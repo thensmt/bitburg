@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { validateJobByType } from "@/lib/validators";
 
 export async function POST(req: Request) {
   const { userId } = await auth();
@@ -25,6 +26,8 @@ export async function POST(req: Request) {
     market,
     eventType,
     deliveryDeadline,
+    assetHandoffMethod,
+    assetHandoffUrl,
     budget,
     applicationDeadline,
     minTierRequired,
@@ -34,13 +37,39 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
 
+  if (typeof budget !== "number" || budget <= 0) {
+    return NextResponse.json({ error: "budget must be a positive number" }, { status: 400 });
+  }
+
+  const resolvedJobType = jobType ?? "ON_SITE";
+  const typeError = validateJobByType({
+    jobType: resolvedJobType,
+    eventDate,
+    durationHours,
+    location,
+    deliveryDeadline,
+    assetHandoffMethod,
+    assetHandoffUrl,
+  });
+  if (typeError) {
+    return NextResponse.json({ error: typeError }, { status: 400 });
+  }
+
+  const deadline = new Date(applicationDeadline);
+  if (Number.isNaN(deadline.getTime()) || deadline < new Date()) {
+    return NextResponse.json(
+      { error: "applicationDeadline must be a valid future date" },
+      { status: 400 }
+    );
+  }
+
   const job = await db.job.create({
     data: {
       clientId: user.id,
       title,
       description,
       category,
-      jobType: jobType ?? "ON_SITE",
+      jobType: resolvedJobType,
       eventDate: eventDate ? new Date(eventDate) : null,
       durationHours: durationHours ?? null,
       location: location ?? null,
@@ -49,8 +78,10 @@ export async function POST(req: Request) {
       market: market ?? "DMV",
       eventType: eventType ?? null,
       deliveryDeadline: deliveryDeadline ? new Date(deliveryDeadline) : null,
+      assetHandoffMethod: assetHandoffMethod ?? null,
+      assetHandoffUrl: assetHandoffUrl ?? null,
       budget,
-      applicationDeadline: new Date(applicationDeadline),
+      applicationDeadline: deadline,
       minTierRequired: minTierRequired ?? "D",
     },
   });
