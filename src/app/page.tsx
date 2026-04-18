@@ -2,11 +2,17 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Footer } from "@/components/marketing/Footer";
+import { WaitlistForm } from "@/components/marketing/WaitlistForm";
+import { TrustBand } from "@/components/marketing/TrustBand";
+import { Testimonials } from "@/components/marketing/Testimonials";
+import { FAQ } from "@/components/marketing/FAQ";
+import { FinalCTA } from "@/components/marketing/FinalCTA";
 
-// Pre-launch: "Sign in", "Get Started", and both CTA cards all route to /waitlist.
-// Post-launch: rewire header links to /sign-in, CTA cards to /onboarding, and
-// remove the /waitlist directory.
-const CTA_HREF = "/waitlist";
+// Pre-launch landing page — primary purpose is email capture for the waitlist.
+// Hero form and final CTA both use the same <WaitlistForm />. In-page anchors
+// jump back to the hero form so every "Get early access" CTA lands in the same
+// place. Post-launch: rewire header links to /sign-in and remove the /waitlist
+// directory.
 
 export default async function Home() {
   const { userId } = await auth();
@@ -17,9 +23,13 @@ export default async function Home() {
       <Header />
       <main>
         <Hero />
+        <TrustBand />
         <SampleWork />
-        <HowItWorks />
         <WhyDifferent />
+        <HowItWorks />
+        <Testimonials />
+        <FAQ />
+        <FinalCTA />
       </main>
       <Footer variant="light" />
     </div>
@@ -38,17 +48,17 @@ function Header() {
         </Link>
         <nav className="flex items-center gap-6">
           <Link
-            href={CTA_HREF}
-            className="text-sm text-[#6B6559] transition-colors hover:text-[#1B4332]"
+            href="#faq-heading"
+            className="hidden text-sm text-[#6B6559] transition-colors hover:text-[#1B4332] sm:inline"
           >
-            Sign in
+            FAQ
           </Link>
-          <Link
-            href={CTA_HREF}
+          <a
+            href="#waitlist"
             className="inline-flex items-center rounded-md bg-[#1B4332] px-4 py-2 text-sm font-medium text-[#F8F7F3] transition-colors hover:bg-[#0F2D22]"
           >
-            Get Started
-          </Link>
+            Get early access
+          </a>
         </nav>
       </div>
     </header>
@@ -57,89 +67,64 @@ function Header() {
 
 function Hero() {
   return (
-    <section className="mx-auto max-w-[1080px] px-6 py-20 md:py-28">
-      <h1 className="font-serif text-4xl font-medium tracking-tight text-[#3D3C37] md:text-6xl lg:text-7xl">
+    <section className="mx-auto max-w-[1080px] px-6 pb-20 pt-16 md:pb-24 md:pt-24">
+      <span className="font-mono text-xs uppercase tracking-[0.22em] text-[#C9A961]">
+        Early access · Opens 2026.09.01 · DMV
+      </span>
+
+      <h1 className="mt-6 font-serif text-4xl font-medium leading-[1.02] tracking-tight text-[#3D3C37] text-balance md:text-6xl lg:text-7xl">
         Booking media in the DMV,
         <br className="hidden md:block" />{" "}
         <span className="text-[#1B4332]">without the DMs.</span>
       </h1>
-      <p className="mt-6 max-w-2xl text-lg text-[#6B6559] md:text-xl">
+
+      <p className="mt-6 max-w-2xl text-lg leading-relaxed text-[#6B6559] text-pretty md:text-xl">
         Vetted photographers, videographers, and editors for local sports,
-        events, and creative work.
+        events, and creative work. Launching in waves &mdash; join the waitlist
+        to be first through the door.
       </p>
 
-      <div className="mt-12 grid grid-cols-1 gap-4 md:grid-cols-2">
-        <CtaCard
-          label="For clients"
-          heading="I need media coverage"
-          description="Post a job, review vetted applicants, and book the right pro for your event."
-          ctaLabel="Post a job"
-          href={CTA_HREF}
-          variant="primary"
-        />
-        <CtaCard
-          label="For pros"
-          heading="I'm a media pro"
-          description="Apply for access, get tiered on your work, and win jobs from local clients."
-          ctaLabel="Apply for access"
-          href={CTA_HREF}
-          variant="outline"
-        />
+      <div
+        id="waitlist"
+        className="mt-12 grid grid-cols-1 gap-10 rounded-lg border border-[#D4CEBC] bg-white p-8 md:grid-cols-[1.1fr_0.9fr] md:gap-12 md:p-10"
+      >
+        <div>
+          <span className="text-xs uppercase tracking-[0.18em] text-[#6B6559]">
+            Request early access
+          </span>
+          <h2 className="mt-2 font-serif text-2xl font-medium tracking-tight text-[#3D3C37] md:text-3xl">
+            One email. One spot on the list.
+          </h2>
+          <p className="mt-3 text-[#6B6559]">
+            Tell us whether you&apos;re booking media or making it. We&apos;ll
+            email you when your side opens up &mdash; nothing before, nothing
+            after.
+          </p>
+
+          <ul className="mt-6 space-y-2 text-sm text-[#3D3C37]">
+            <Checkpoint>Priority access the day we open</Checkpoint>
+            <Checkpoint>Founding-member rates locked for 12 months</Checkpoint>
+            <Checkpoint>Pros: first in line for portfolio review</Checkpoint>
+          </ul>
+        </div>
+
+        <div className="md:border-l md:border-[#D4CEBC] md:pl-12">
+          <WaitlistForm />
+        </div>
       </div>
-
-      <p className="mt-12 text-sm text-[#6B6559]">
-        40+ vetted pros
-        <span className="mx-3 text-[#C9A961]" aria-hidden>
-          ·
-        </span>
-        Tiered from D to S
-        <span className="mx-3 text-[#C9A961]" aria-hidden>
-          ·
-        </span>
-        DMV local
-      </p>
     </section>
   );
 }
 
-function CtaCard({
-  label,
-  heading,
-  description,
-  ctaLabel,
-  href,
-  variant,
-}: {
-  label: string;
-  heading: string;
-  description: string;
-  ctaLabel: string;
-  href: string;
-  variant: "primary" | "outline";
-}) {
-  const buttonClass =
-    variant === "primary"
-      ? "inline-flex items-center rounded-md bg-[#1B4332] px-5 py-2.5 text-sm font-medium text-[#F8F7F3] transition-colors hover:bg-[#0F2D22]"
-      : "inline-flex items-center rounded-md border border-[#1B4332] px-5 py-2.5 text-sm font-medium text-[#1B4332] transition-colors hover:bg-[#1B4332] hover:text-[#F8F7F3]";
-
+function Checkpoint({ children }: { children: React.ReactNode }) {
   return (
-    <div className="group flex flex-col justify-between rounded-lg border border-[#D4CEBC] bg-white p-8 transition-colors hover:border-[#1B4332]">
-      <div>
-        <span className="text-xs uppercase tracking-[0.18em] text-[#6B6559]">
-          {label}
-        </span>
-        <h3 className="mt-3 font-serif text-2xl font-medium tracking-tight text-[#3D3C37] md:text-3xl">
-          {heading}
-        </h3>
-        <p className="mt-3 text-[#6B6559]">{description}</p>
-      </div>
-      <Link href={href} className={`${buttonClass} mt-6 w-fit`}>
-        {ctaLabel}
-        <span className="ml-2" aria-hidden>
-          →
-        </span>
-      </Link>
-    </div>
+    <li className="flex items-start gap-3">
+      <span
+        aria-hidden
+        className="mt-[7px] inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-[#C9A961]"
+      />
+      <span>{children}</span>
+    </li>
   );
 }
 
@@ -152,7 +137,10 @@ function SampleWork() {
   return (
     <section className="border-t border-[#D4CEBC] py-20">
       <div className="mx-auto max-w-[1080px] px-6">
-        <h2 className="font-serif text-3xl font-medium tracking-tight text-[#3D3C37] md:text-4xl">
+        <span className="text-xs uppercase tracking-[0.18em] text-[#C9A961]">
+          A taste of the work
+        </span>
+        <h2 className="mt-3 font-serif text-3xl font-medium tracking-tight text-[#3D3C37] md:text-4xl">
           Sample work
         </h2>
         <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-3">
@@ -164,8 +152,11 @@ function SampleWork() {
                 <span className="absolute right-3 top-3 rounded-sm border border-[#C9A961]/40 bg-[#F8F7F3] px-2 py-0.5 text-[10px] uppercase tracking-[0.16em] text-[#C9A961]">
                   Placeholder
                 </span>
-                <span className="font-serif text-lg text-[#3D3C37]/60">
-                  ▢
+                <span
+                  aria-hidden
+                  className="font-serif text-lg text-[#3D3C37]/60"
+                >
+                  {"\u25A2"}
                 </span>
               </div>
               <p className="mt-4 text-sm text-[#3D3C37]">{item.title}</p>
@@ -179,21 +170,48 @@ function SampleWork() {
 
 function HowItWorks() {
   const clients = [
-    { n: "01", title: "Post a job", body: "Share what you need, where, when, and your budget. Takes two minutes." },
-    { n: "02", title: "Review applicants", body: "See portfolios, tiers, and rates from vetted local pros. No cold DMs." },
-    { n: "03", title: "Book with confidence", body: "Pick your fit, deposit held in escrow until the work is delivered." },
+    {
+      n: "01",
+      title: "Post a job",
+      body: "Share what you need, where, when, and your budget. Takes two minutes.",
+    },
+    {
+      n: "02",
+      title: "Review applicants",
+      body: "See portfolios, tiers, and rates from vetted local pros. No cold DMs.",
+    },
+    {
+      n: "03",
+      title: "Book with confidence",
+      body: "Pick your fit, deposit held in escrow until the work is delivered.",
+    },
   ];
   const pros = [
-    { n: "01", title: "Apply", body: "Submit portfolio and a short work history. We vet every application." },
-    { n: "02", title: "Get tiered", body: "Start at D, climb to S as you deliver. Tier gates what you can bid on." },
-    { n: "03", title: "Win work", body: "Apply to jobs that fit your craft. Get paid on delivery, every time." },
+    {
+      n: "01",
+      title: "Apply",
+      body: "Submit portfolio and a short work history. We vet every application.",
+    },
+    {
+      n: "02",
+      title: "Get tiered",
+      body: "Start at D, climb to S as you deliver. Tier gates what you can bid on.",
+    },
+    {
+      n: "03",
+      title: "Win work",
+      body: "Apply to jobs that fit your craft. Get paid on delivery, every time.",
+    },
   ];
 
   return (
     <section className="border-t border-[#D4CEBC] py-20">
       <div className="mx-auto max-w-[1080px] px-6">
-        <h2 className="font-serif text-3xl font-medium tracking-tight text-[#3D3C37] md:text-4xl">
+        <span className="text-xs uppercase tracking-[0.18em] text-[#C9A961]">
           How it works
+        </span>
+        <h2 className="mt-3 font-serif text-3xl font-medium tracking-tight text-[#3D3C37] md:text-4xl">
+          Two sides. One front door.
         </h2>
         <div className="mt-12 grid grid-cols-1 gap-16 md:grid-cols-2 md:gap-12">
           <div>
@@ -254,8 +272,11 @@ function WhyDifferent() {
   return (
     <section className="border-t border-[#D4CEBC] py-20">
       <div className="mx-auto max-w-[1080px] px-6">
-        <h2 className="font-serif text-3xl font-medium tracking-tight text-[#3D3C37] md:text-4xl">
-          Why it's different
+        <span className="text-xs uppercase tracking-[0.18em] text-[#C9A961]">
+          Why Bitburg
+        </span>
+        <h2 className="mt-3 font-serif text-3xl font-medium tracking-tight text-[#3D3C37] md:text-4xl">
+          Built for the way the DMV actually shoots.
         </h2>
         <div className="mt-12 grid grid-cols-1 gap-10 md:grid-cols-3 md:gap-8">
           {items.map((item) => (

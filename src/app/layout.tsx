@@ -17,8 +17,15 @@ const fraunces = Fraunces({
 });
 
 export const metadata: Metadata = {
-  title: "Bitburg",
-  description: "The marketplace for media professionals",
+  title: "Bitburg — The DMV's vetted media marketplace",
+  description:
+    "Vetted photographers, videographers, and editors for local sports, events, and creative work in DC, Maryland, and Virginia. Join the waitlist for early access.",
+  openGraph: {
+    title: "Bitburg — The DMV's vetted media marketplace",
+    description:
+      "Booking media in the DMV, without the DMs. Join the waitlist for early access.",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
