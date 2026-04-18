@@ -33,7 +33,7 @@ export function FAQ() {
   return (
     <section
       aria-labelledby="faq-heading"
-      className="border-t border-[#D4CEBC] bg-[#F1EEE4] py-20"
+      className="border-t border-white/10 bg-[#0F1F18] py-20"
     >
       <div className="mx-auto max-w-[780px] px-6">
         <span className="text-xs uppercase tracking-[0.18em] text-[#C9A961]">
@@ -41,19 +41,19 @@ export function FAQ() {
         </span>
         <h2
           id="faq-heading"
-          className="mt-3 font-serif text-3xl font-medium tracking-tight text-[#3D3C37] md:text-4xl"
+          className="mt-3 font-serif text-3xl font-medium tracking-tight text-[#F8F7F3] md:text-4xl"
         >
           Before you sign up.
         </h2>
 
-        <dl className="mt-12 divide-y divide-[#D4CEBC] border-y border-[#D4CEBC]">
+        <dl className="mt-12 divide-y divide-white/10 border-y border-white/10">
           {faqs.map((faq) => (
             <details
               key={faq.q}
               className="group [&_summary::-webkit-details-marker]:hidden"
             >
-              <summary className="flex cursor-pointer list-none items-start justify-between gap-6 py-5 text-left">
-                <dt className="font-serif text-lg text-[#3D3C37] md:text-xl">
+              <summary className="flex cursor-pointer list-none items-start justify-between gap-6 py-5 text-left transition-colors hover:text-[#C9A961]">
+                <dt className="font-serif text-lg text-[#F8F7F3] md:text-xl">
                   {faq.q}
                 </dt>
                 <span
@@ -63,7 +63,7 @@ export function FAQ() {
                   +
                 </span>
               </summary>
-              <dd className="pb-6 pr-10 text-[#6B6559]">{faq.a}</dd>
+              <dd className="pb-6 pr-10 text-[#A8B5AE]">{faq.a}</dd>
             </details>
           ))}
         </dl>

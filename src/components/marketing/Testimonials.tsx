@@ -27,7 +27,7 @@ export function Testimonials() {
   return (
     <section
       aria-labelledby="what-were-hearing"
-      className="border-t border-[#D4CEBC] py-20"
+      className="border-t border-white/10 py-20"
     >
       <div className="mx-auto max-w-[1080px] px-6">
         <span className="text-xs uppercase tracking-[0.18em] text-[#C9A961]">
@@ -35,7 +35,7 @@ export function Testimonials() {
         </span>
         <h2
           id="what-were-hearing"
-          className="mt-3 font-serif text-3xl font-medium tracking-tight text-[#3D3C37] md:text-4xl"
+          className="mt-3 font-serif text-3xl font-medium tracking-tight text-[#F8F7F3] md:text-4xl"
         >
           The problem isn&apos;t talent.
           <br className="hidden md:block" /> It&apos;s finding each other.
@@ -45,7 +45,7 @@ export function Testimonials() {
           {quotes.map((q) => (
             <figure
               key={q.name}
-              className="flex h-full flex-col justify-between rounded-lg border border-[#D4CEBC] bg-white p-8"
+              className="flex h-full flex-col justify-between rounded-lg border border-white/10 bg-[#0F1F18] p-8 transition-colors hover:border-[#C9A961]/40"
             >
               <blockquote>
                 <span
@@ -54,15 +54,15 @@ export function Testimonials() {
                 >
                   {"\u201C"}
                 </span>
-                <p className="mt-2 font-serif text-lg leading-snug text-[#3D3C37]">
+                <p className="mt-2 font-serif text-lg leading-snug text-[#F8F7F3]">
                   {q.quote}
                 </p>
               </blockquote>
-              <figcaption className="mt-8 border-t border-[#D4CEBC] pt-4">
-                <div className="text-sm font-medium text-[#3D3C37]">
+              <figcaption className="mt-8 border-t border-white/10 pt-4">
+                <div className="text-sm font-medium text-[#F8F7F3]">
                   {q.name}
                 </div>
-                <div className="text-xs text-[#6B6559]">{q.role}</div>
+                <div className="text-xs text-[#A8B5AE]">{q.role}</div>
               </figcaption>
             </figure>
           ))}
