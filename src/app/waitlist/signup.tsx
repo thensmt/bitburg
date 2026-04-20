@@ -14,8 +14,11 @@ export function Signup() {
   const [clientDone, setClientDone] = useState(false);
   const [clientData, setClientData] = useState({ email: '', name: '', role: '', zip: '' });
 
-  // Pro flow state
-  const [proStep, setProStep] = useState(0); // 0 = email capture, 1..5 = wizard, 6 = done
+  // Pro flow state — total wizard steps depends on how many specialties the
+  // pro picks (3 + specialties.length), so "done" is a separate flag rather
+  // than a fixed sentinel step.
+  const [proStep, setProStep] = useState(0); // 0 = email capture, 1..N = wizard
+  const [proDone, setProDone] = useState(false);
   const [pro, setPro] = useState({
     email: '', name: '', zip: '',
     specialties: [],
@@ -37,7 +40,7 @@ export function Signup() {
 
   function submitClient(e) { e.preventDefault(); setClientDone(true); }
   function submitProEmail(e) { e.preventDefault(); setProStep(1); }
-  function finishPro() { setProStep(6); }
+  function finishPro() { setProDone(true); }
   function setP(patch) { setPro(p => ({ ...p, ...patch })); }
 
   return (
@@ -61,7 +64,7 @@ export function Signup() {
             </button>
             <button role="tab" aria-selected={tab === 'pro'}
               className={`bb-signup__tab bb-signup__tab--pros${tab === 'pro' ? ' is-active' : ''}`}
-              onClick={() => { setTab('pro'); setProStep(0); }}>
+              onClick={() => { setTab('pro'); setProStep(0); setProDone(false); }}>
               I'm a pro <span className="badge">◆ Audition</span>
             </button>
           </div>
@@ -76,15 +79,15 @@ export function Signup() {
               </div>
             ) : <ClientForm data={clientData} setData={setClientData} onSubmit={submitClient} />
           ) : (
-            proStep === 0 ? <ProEmailCapture pro={pro} setP={setP} onSubmit={submitProEmail} /> :
-            proStep === 6 ? (
+            proDone ? (
               <div className="bb-signup__done">
                 <div className="bb-signup__done__mark">✓</div>
                 <h4>You're on the list.</h4>
                 <p>We'll review your submission and send next steps to <b>{pro.email || 'you'}</b> within 5 business days.</p>
-                <button className="bb-signup__reset" onClick={() => { setProStep(0); setPro({ email: '', name: '', zip: '', specialties: [], years: '', paidGigs: '', tier: '', gear: '', hsSports: '', hsCount: '', insurance: '', portfolio: '', weekdays: false, weekends: false, radius: '', turnaround: [], rushPct: '', pricing: {} }); }}>← Submit another pro</button>
+                <button className="bb-signup__reset" onClick={() => { setProDone(false); setProStep(0); setPro({ email: '', name: '', zip: '', specialties: [], years: '', paidGigs: '', tier: '', gear: '', hsSports: '', hsCount: '', insurance: '', portfolio: '', weekdays: false, weekends: false, radius: '', turnaround: [], rushPct: '', pricing: {} }); }}>← Submit another pro</button>
               </div>
-            ) : <ProWizard step={proStep} setStep={setProStep} pro={pro} setP={setP} onFinish={finishPro} pricingVariant={pricingVariant} />
+            ) : proStep === 0 ? <ProEmailCapture pro={pro} setP={setP} onSubmit={submitProEmail} /> :
+            <ProWizard step={proStep} setStep={setProStep} pro={pro} setP={setP} onFinish={finishPro} pricingVariant={pricingVariant} />
           )}
         </div>
       </div>
@@ -251,8 +254,8 @@ export function ProWizard({ step, setStep, pro, setP, onFinish, pricingVariant }
 
   function next() {
     if (!canContinue) return;
-    setStep(Math.min(maxStep + 1, step + 1));
-    if (step >= maxStep) onFinish();
+    if (step >= maxStep) { onFinish(); return; }
+    setStep(step + 1);
   }
   function back() { setStep(Math.max(1, step - 1)); }
 
