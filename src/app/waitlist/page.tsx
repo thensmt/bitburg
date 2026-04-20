@@ -45,18 +45,18 @@ export default function WaitlistPage() {
         </h1>
 
         <p className="mt-8 max-w-prose text-lg leading-relaxed text-[#F8F7F3]/70">
-          Bitburg is the DMV's first vetted media marketplace. Sports, events,
-          creative work — booked without the DMs. We're rolling out access in
+          Bitburg is the DMV&apos;s first vetted media marketplace. Sports, events,
+          creative work — booked without the DMs. We&apos;re rolling out access in
           waves. Join the list to be first.
         </p>
 
         {submitted ? (
           <div className="mt-12 border-t border-[#F8F7F3]/15 pt-12">
             <p className="font-serif text-2xl text-[#F8F7F3]">
-              You're on the list.
+              You&apos;re on the list.
             </p>
             <p className="mt-3 text-[#F8F7F3]/60">
-              We'll email you when your role opens up.
+              We&apos;ll email you when your role opens up.
             </p>
           </div>
         ) : (
@@ -95,7 +95,7 @@ export default function WaitlistPage() {
                   active={role === "pro"}
                   onClick={() => setRole("pro")}
                 >
-                  I'm a pro
+                  I&apos;m a pro
                 </RolePill>
               </div>
             </Field>
@@ -117,7 +117,7 @@ export default function WaitlistPage() {
             </button>
 
             <p className="text-xs text-[#F8F7F3]/50">
-              We'll email you when your role opens up. No spam.
+              We&apos;ll email you when your role opens up. No spam.
             </p>
           </form>
         )}
