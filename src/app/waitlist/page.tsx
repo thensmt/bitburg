@@ -1,166 +1,227 @@
 "use client";
 
-import Link from "next/link";
-import { useState, type FormEvent } from "react";
-import { Footer } from "@/components/marketing/Footer";
-
-// Pre-launch waitlist — visual only. Form submit does nothing.
-// Delete this route and re-point CTAs to Clerk's /sign-up at launch.
-
-type Role = "client" | "pro" | null;
+import "./bitburg.css";
+import { Specialties, HowItWorks, SplitSections } from "./sections";
+import { Signup } from "./signup";
 
 export default function WaitlistPage() {
-  const [role, setRole] = useState<Role>(null);
-  const [submitted, setSubmitted] = useState(false);
-
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    // no network — visual-only mockup
-    setSubmitted(true);
-  }
-
-  const textareaPlaceholder =
-    role === "pro"
-      ? "What do you shoot? Sports, events, portraits, video, editing…"
-      : role === "client"
-      ? "What do you need coverage for? Sport, event, date if you know it…"
-      : "Tell us a little about what brings you here.";
-
   return (
-    <div className="relative min-h-screen bg-[#0F2D22] text-[#F8F7F3] font-sans antialiased">
-      <Link
-        href="/"
-        className="fixed left-6 top-6 z-10 font-serif text-base text-[#F8F7F3]/80 transition-colors hover:text-[#C9A961]"
-      >
-        Bitburg
-      </Link>
-
-      <main className="mx-auto flex min-h-screen max-w-[640px] flex-col justify-center px-6 py-24 md:py-32">
-        <span className="mb-10 font-mono text-xs uppercase tracking-[0.22em] text-[#C9A961]">
-          Early access · Opens 2026.09.01
-        </span>
-
-        <h1 className="font-serif text-5xl font-medium leading-[0.95] tracking-tight text-[#F8F7F3] md:text-7xl">
-          Get in early.
-        </h1>
-
-        <p className="mt-8 max-w-prose text-lg leading-relaxed text-[#F8F7F3]/70">
-          Bitburg is the DMV's first vetted media marketplace. Sports, events,
-          creative work — booked without the DMs. We're rolling out access in
-          waves. Join the list to be first.
-        </p>
-
-        {submitted ? (
-          <div className="mt-12 border-t border-[#F8F7F3]/15 pt-12">
-            <p className="font-serif text-2xl text-[#F8F7F3]">
-              You're on the list.
-            </p>
-            <p className="mt-3 text-[#F8F7F3]/60">
-              We'll email you when your role opens up.
-            </p>
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="mt-12 space-y-8">
-            <Field label="Name">
-              <input
-                type="text"
-                name="name"
-                required
-                autoComplete="name"
-                className="w-full border-b border-[#F8F7F3]/30 bg-transparent py-3 text-[#F8F7F3] placeholder:text-[#F8F7F3]/40 focus:border-[#C9A961] focus:outline-none"
-                placeholder="Your name"
-              />
-            </Field>
-
-            <Field label="Email">
-              <input
-                type="email"
-                name="email"
-                required
-                autoComplete="email"
-                className="w-full border-b border-[#F8F7F3]/30 bg-transparent py-3 text-[#F8F7F3] placeholder:text-[#F8F7F3]/40 focus:border-[#C9A961] focus:outline-none"
-                placeholder="you@domain.com"
-              />
-            </Field>
-
-            <Field label="I'm signing up as…">
-              <div className="flex flex-wrap gap-3 pt-2">
-                <RolePill
-                  active={role === "client"}
-                  onClick={() => setRole("client")}
-                >
-                  I need media
-                </RolePill>
-                <RolePill
-                  active={role === "pro"}
-                  onClick={() => setRole("pro")}
-                >
-                  I'm a pro
-                </RolePill>
-              </div>
-            </Field>
-
-            <Field label="Tell us more (optional)">
-              <textarea
-                name="notes"
-                rows={3}
-                className="w-full resize-none border-b border-[#F8F7F3]/30 bg-transparent py-3 text-[#F8F7F3] placeholder:text-[#F8F7F3]/40 focus:border-[#C9A961] focus:outline-none"
-                placeholder={textareaPlaceholder}
-              />
-            </Field>
-
-            <button
-              type="submit"
-              className="mt-4 w-full rounded-sm bg-[#F8F7F3] px-6 py-4 text-sm font-medium uppercase tracking-[0.18em] text-[#0F2D22] transition-colors hover:bg-[#C9A961]"
-            >
-              Request early access
-            </button>
-
-            <p className="text-xs text-[#F8F7F3]/50">
-              We'll email you when your role opens up. No spam.
-            </p>
-          </form>
-        )}
-      </main>
-
-      <Footer variant="dark" />
+    <div className="bb-root">
+      <div className="bb-page">
+        <Nav />
+        <Hero />
+        <Specialties />
+        <HowItWorks />
+        <SplitSections />
+        <Signup />
+        <Footer />
+      </div>
     </div>
   );
 }
 
-function Field({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
+function Nav() {
   return (
-    <label className="block">
-      <span className="mb-1 block text-xs uppercase tracking-[0.18em] text-[#F8F7F3]/50">
-        {label}
-      </span>
-      {children}
-    </label>
+    <nav className="bb-nav">
+      <div className="bb-nav__brand">
+        <span className="bb-nav__mark"><span>B</span></span>
+        <span>Bitburg</span>
+        <span className="bb-nav__beta"><span>Early access</span></span>
+      </div>
+      <ul className="bb-nav__links">
+        <li><a href="#how">How it works</a></li>
+        <li><a href="#pros">For pros</a></li>
+        <li><a href="#clients">For clients</a></li>
+        <li><a href="#signup">Early access</a></li>
+      </ul>
+      <div>
+        <a href="#signup" className="bb-btn bb-btn--primary">Get in line →</a>
+      </div>
+    </nav>
   );
 }
 
-function RolePill({
-  active,
-  onClick,
-  children,
-}: {
-  active: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
-  const className = active
-    ? "rounded-full bg-[#C9A961] px-5 py-2 text-sm text-[#0F2D22] transition-colors"
-    : "rounded-full border border-[#F8F7F3]/30 px-5 py-2 text-sm text-[#F8F7F3]/70 transition-colors hover:border-[#C9A961] hover:text-[#F8F7F3]";
-
+function Hero() {
   return (
-    <button type="button" onClick={onClick} className={className}>
-      {children}
-    </button>
+    <section className="bb-hero">
+      <div className="bb-hero__bg" />
+      <div className="bb-hero__grid" />
+      <div className="bb-hero__grain" />
+      <div className="bb-hero__inner">
+        <div>
+          <span className="bb-capsule bb-capsule--outline">
+            <span>● Early access · Fall 2026</span>
+          </span>
+          <h1 className="bb-hero__title">
+            The <em>media crew</em><br />
+            Built for sports.
+          </h1>
+          <p className="bb-hero__lede">
+            Bitburg is the tiered marketplace for sports media in the DMV —
+            photographers, videographers, broadcasters, graphic designers,
+            live-stream ops and social managers. Teams post the gig,
+            pros earn the tier, everyone gets paid on the job is done.
+          </p>
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+            <a href="#signup" className="bb-btn bb-btn--primary bb-btn--lg">
+              Join the crew <span aria-hidden="true">→</span>
+            </a>
+            <a href="#how" className="bb-btn bb-btn--ghost-dark bb-btn--lg">
+              How it works
+            </a>
+          </div>
+          <div className="bb-hero__stats">
+            <div>
+              <div className="bb-stat__num bb-stat__num--blue">5</div>
+              <span className="bb-stat__label">Tiers · D → S</span>
+            </div>
+            <div>
+              <div className="bb-stat__num">6</div>
+              <span className="bb-stat__label">Sports-media specialties</span>
+            </div>
+            <div>
+              <div className="bb-stat__num bb-stat__num--gold">0%</div>
+              <span className="bb-stat__label">Early-access fees</span>
+            </div>
+          </div>
+        </div>
+
+        <TeaserCard />
+      </div>
+    </section>
+  );
+}
+
+function TeaserCard() {
+  return (
+    <div style={{ position: "relative" }}>
+      <article className="bb-jobcard" role="img" aria-label="Bitburg early access teaser">
+        <header className="bb-jobcard__chrome">
+          <div className="bb-jobcard__dots"><i /><i /><i /></div>
+          <div className="bb-jobcard__url">bitburg.co/early-access</div>
+        </header>
+        <div className="bb-jobcard__body">
+          <div className="bb-jobcard__eyebrow">
+            <span className="live">● NOW ENROLLING</span>
+            <span>·</span>
+            <span>DMV · Fall 2026</span>
+          </div>
+          <h3 className="bb-jobcard__title">
+            Early access is <em>open.</em>
+          </h3>
+          <div className="bb-jobcard__sub">
+            <span>For pros</span>
+            <span>For teams</span>
+            <span>Invite-only launch</span>
+          </div>
+
+          <div className="bb-teaser">
+            <div className="bb-teaser__row">
+              <span className="bb-teaser__dot" />
+              <span className="bb-teaser__label">Event photo</span>
+              <span className="bb-teaser__meta">DMV</span>
+            </div>
+            <div className="bb-teaser__row">
+              <span className="bb-teaser__dot" />
+              <span className="bb-teaser__label">Event video</span>
+              <span className="bb-teaser__meta">DMV</span>
+            </div>
+            <div className="bb-teaser__row">
+              <span className="bb-teaser__dot" />
+              <span className="bb-teaser__label">Live broadcast</span>
+              <span className="bb-teaser__meta">DMV</span>
+            </div>
+            <div className="bb-teaser__row">
+              <span className="bb-teaser__dot" />
+              <span className="bb-teaser__label">Graphic design</span>
+              <span className="bb-teaser__meta">DMV</span>
+            </div>
+            <div className="bb-teaser__row">
+              <span className="bb-teaser__dot" />
+              <span className="bb-teaser__label">Social media</span>
+              <span className="bb-teaser__meta">DMV</span>
+            </div>
+            <div className="bb-teaser__row">
+              <span className="bb-teaser__dot" />
+              <span className="bb-teaser__label">Stream ops</span>
+              <span className="bb-teaser__meta">DMV</span>
+            </div>
+          </div>
+
+          <div className="bb-jobcard__actions">
+            <a
+              href="#signup"
+              className="bb-jobcard__btn bb-jobcard__btn--ghost"
+              style={{ textDecoration: "none", textAlign: "center", display: "grid", placeItems: "center" }}
+            >
+              I&apos;m a team
+            </a>
+            <a
+              href="#signup"
+              className="bb-jobcard__btn bb-jobcard__btn--primary"
+              style={{ textDecoration: "none", textAlign: "center", display: "grid", placeItems: "center" }}
+            >
+              I&apos;m a pro →
+            </a>
+          </div>
+        </div>
+      </article>
+    </div>
+  );
+}
+
+function Footer() {
+  return (
+    <footer className="bb-footer">
+      <div className="bb-footer__grid">
+        <div className="bb-footer__brand">
+          <div className="bb-nav__brand" style={{ color: "#fff" }}>
+            <span className="bb-nav__mark"><span>B</span></span>
+            <span>Bitburg</span>
+          </div>
+          <p>
+            A two-sided marketplace for media professionals and the
+            clients who hire them — purpose-built for the DMV.
+          </p>
+          <p
+            style={{
+              marginTop: 16,
+              fontSize: 11,
+              letterSpacing: ".22em",
+              textTransform: "uppercase",
+              color: "#6b6e73",
+              fontWeight: 700,
+            }}
+          >
+            Launching Fall 2026
+          </p>
+        </div>
+        <div className="bb-footer__col">
+          <h4>Product</h4>
+          <a>How it works</a>
+          <a>Tier system <em>· new</em></a>
+          <a>Pricing</a>
+          <a>Roadmap</a>
+        </div>
+        <div className="bb-footer__col">
+          <h4>Crew</h4>
+          <a>For pros</a>
+          <a>For clients</a>
+          <a>Tryouts <em>· open</em></a>
+          <a>Refer a pro</a>
+        </div>
+        <div className="bb-footer__col">
+          <h4>Company</h4>
+          <a href="mailto:hello@bitburg.co">hello@bitburg.co</a>
+          <a>Press kit</a>
+          <a>Terms</a>
+          <a>Privacy</a>
+        </div>
+      </div>
+      <div className="bb-footer__bot">
+        <span>© 2026 Bitburg · Northern Virginia</span>
+        <span>Built for the DMV</span>
+      </div>
+    </footer>
   );
 }
